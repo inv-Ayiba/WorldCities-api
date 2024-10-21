@@ -22,27 +22,25 @@ namespace WorldCities.Server.Controllers
         }
 
         // GET: api/Cities
-        [HttpGet]
-        //public async Task<ActionResult<IEnumerable<City>>> GetCities(int pageIndex = 0,int pageSize = 10)
-        // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&
-        // sortOrder=asc
+        // GET: api/Cities/?pageIndex=0&pageSize=10
+        // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&sortOrder=asc
         [HttpGet]
         public async Task<ActionResult<ApiResult<City>>> GetCities(
-int pageIndex = 0,
-int pageSize = 10,
-string? sortColumn = null,
-string? sortOrder = null,
-string? filterColumn = null,
-string? filterQuery = null)
+            int pageIndex = 0,
+            int pageSize = 10,
+            string? sortColumn = null,
+            string? sortOrder = null,
+            string? filterColumn = null,
+            string? filterQuery = null)
         {
             return await ApiResult<City>.CreateAsync(
-            _context.Cities.AsNoTracking(),
-            pageIndex,
-            pageSize,
-            sortColumn,
-            sortOrder,
-            filterColumn,
-            filterQuery);
+                    _context.Cities.AsNoTracking(),
+                    pageIndex,
+                    pageSize,
+                    sortColumn,
+                    sortOrder,
+                    filterColumn,
+                    filterQuery);
         }
 
         // GET: api/Cities/5
@@ -120,6 +118,19 @@ string? filterQuery = null)
         private bool CityExists(int id)
         {
             return _context.Cities.AsNoTracking().Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Route("IsDupeCity")]
+        public bool IsDupeCity(City city)
+        {
+            return _context.Cities.AsNoTracking().Any(
+                e => e.Name == city.Name
+                && e.Lat == city.Lat
+                && e.Lon == city.Lon
+                && e.CountryId == city.CountryId
+                && e.Id != city.Id
+            );
         }
     }
 }
